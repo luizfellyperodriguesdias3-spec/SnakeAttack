@@ -5,12 +5,17 @@ from pygame.locals import *
 from random import randint
 
 pygame.init()
-fundo = pygame.image.load('fundo.jpg')
+
+# Redimensiona a imagem para o tamanho da tela
+largura_tela, altura_tela = 640, 480
+fundo = pygame.image.load('fundo.jpg')  # Fundo do jogo normal (sem redimensionar)
+fundo_menu = pygame.image.load('snake-game.jpg')
+fundo_menu = pygame.transform.scale(fundo_menu, (largura_tela, altura_tela))
+
 pygame.mixer_music.load('musica.mp3')
 pygame.mixer.music.play(-1)
 barulho = pygame.mixer.Sound('coin.wav')
 
-largura_tela, altura_tela = 640, 480
 tela = pygame.display.set_mode((largura_tela, altura_tela))
 pygame.display.set_caption("Snake Attack")
 placar = pygame.font.Font(None, 36)
@@ -39,7 +44,7 @@ def desenha_cobra(cobra, cor):
 
 def menu():
     global modo_jogo
-    tela.blit(fundo, (0, 0))
+    tela.blit(fundo_menu, (0, 0))  # Fundo redimensionado do menu
     titulo = placar.render("SNAKE ATTACK", True, (0, 255, 0))
     texto1 = placar.render("1: Modo Solo", True, (255, 255, 255))
     texto2 = placar.render("2: Modo Multiplayer", True, (255, 255, 255))
@@ -107,7 +112,6 @@ def aplicar_efeitos(jogador, maca):
         globals()[f"vx{j}"] *= 1.5
         globals()[f"vy{j}"] *= 1.5
     elif maca["tipo"] == "amarela":
-        # REMOVE O VENENO SE EXISTIR
         if "veneno" in e:
             e.pop("veneno", None)
             e.pop("veneno_tick", None)
@@ -126,7 +130,7 @@ def checar_efeitos(jogador):
     e = efeitos[jogador]
 
     if "veneno" in e:
-        if now - e["veneno_tick"] >= 5000:  # A CADA 5 SEGUNDOS
+        if now - e["veneno_tick"] >= 5000:
             e["veneno_tick"] = now
             globals()[f"pontos{j}"] = max(0, globals()[f"pontos{j}"] - 1)
             globals()[f"vx{j}"] *= 0.9
