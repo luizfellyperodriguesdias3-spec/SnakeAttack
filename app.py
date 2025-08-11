@@ -100,14 +100,14 @@ def aplicar_efeitos(jogador, maca):
     now = pygame.time.get_ticks()
 
     if maca["tipo"] == "vermelha":
-        globals()[f"tamanho{j}"] += 1
+        globals()[f"tamanho{j}"] += 2
         globals()[f"pontos{j}"] += 1
     elif maca["tipo"] == "roxa":
         global game_over
         game_over = True
     elif maca["tipo"] == "verde":
         e["velocidade"] = now
-        globals()[f"tamanho{j}"] += 1
+        globals()[f"tamanho{j}"] += 5
         globals()[f"pontos{j}"] += 2
         globals()[f"vx{j}"] *= 1.5
         globals()[f"vy{j}"] *= 1.5
@@ -115,14 +115,17 @@ def aplicar_efeitos(jogador, maca):
         if "veneno" in e:
             e.pop("veneno", None)
             e.pop("veneno_tick", None)
-        globals()[f"tamanho{j}"] += 1
+        globals()[f"tamanho{j}"] += 2
         globals()[f"pontos{j}"] += 5
     elif maca["tipo"] == "branca":
         e["invencivel"] = now
         globals()[f"pontos{j}"] += 5
+        globals()[f"tamanho{j}"] += 5
     elif maca["tipo"] == "preta":
         e["veneno"] = now
         e["veneno_tick"] = now
+        globals()[f"tamanho{j}"] -= 1
+
 
 def checar_efeitos(jogador):
     now = pygame.time.get_ticks()
@@ -223,7 +226,7 @@ while True:
                     if tipo == "vermelha" and tempo_espera > 5000:
                         maças[tipo] = cria_maca(tipo)
                         spawn_timers[tipo] = now
-                    elif tipo != "vermelha" and tempo_espera > 15000:
+                    elif tipo != "vermelha" and tempo_espera > 8000:
                         maças[tipo] = cria_maca(tipo)
                         spawn_timers[tipo] = now
                 else:
@@ -264,8 +267,24 @@ while True:
                 mostrar_efeitos("j2", 300)
 
         else:
-            tela.blit(placar.render("FIM DE JOGO! Pressione R para reiniciar.", True, (255, 0, 0)), (100, 220))
-            tela.blit(placar.render("Pressione M para voltar ao menu", True, (255, 255, 255)), (140, 260))
+            tela.blit(placar.render("FIM DE JOGO!", True, (255, 0, 0)), (220, 180))
+            
+            if modo_jogo == "multiplayer":
+                tela.blit(placar.render(f"Pontuação J1: {pontos1}", True, (0, 255, 0)), (200, 220))
+                tela.blit(placar.render(f"Pontuação J2: {pontos2}", True, (255, 100, 100)), (200, 260))
+
+                if pontos1 > pontos2:
+                    vencedor = "Jogador 1 venceu!"
+                elif pontos2 > pontos1:
+                    vencedor = "Jogador 2 venceu!"
+                else:
+                    vencedor = "Empate!"
+
+                tela.blit(placar.render(vencedor, True, (255, 255, 0)), (200, 300))
+
+            tela.blit(placar.render("Pressione R para reiniciar", True, (255, 255, 255)), (160, 340))
+            tela.blit(placar.render("Pressione M para voltar ao menu", True, (255, 255, 255)), (120, 380))
+
 
         pygame.display.update()
 
